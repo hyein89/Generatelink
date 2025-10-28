@@ -1,0 +1,145 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons+Round");
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: #f8fafc;
+  color: #1f2937;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 20px;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 30px;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #1e40af;
+}
+
+main {
+  width: 100%;
+  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+input[type="url"],
+input[type="text"],
+input[type="file"] {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.95rem;
+  background: white;
+}
+
+button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 14px 18px;
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+.output {
+  word-break: break-all;
+  background: #f1f5f9;
+  padding: 12px;
+  font-family: monospace;
+  border: 1px solid #cbd5e1;
+  font-size: 0.9rem;
+}
+
+.copy-btn {
+  background: #16a34a;
+}
+
+.copy-btn:hover {
+  background: #15803d;
+}
+
+.notify {
+  text-align: center;
+  font-size: 0.9rem;
+  padding: 8px;
+  color: white;
+  background: #2563eb;
+  display: block;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.image-preview {
+  width: 100%;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.image-preview img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  header {
+    font-size: 1.2rem;
+  }
+  input,
+  button {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 20px 15px;
+  }
+  header {
+    font-size: 1rem;
+  }
+  button {
+    padding: 12px;
+  }
+}
