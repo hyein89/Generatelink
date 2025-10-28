@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import { pageTitle } from '../lib/config';
+
 
 interface SlugPageProps {
   pageTitle?: string; // Bisa set dari luar
