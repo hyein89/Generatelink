@@ -12,37 +12,30 @@ export default function SlugPage() {
   const [imageUrl, setImageUrl] = useState('');
 
   useEffect(() => {
-  if (!slug || typeof slug !== 'string') return;
+    if (!slug || typeof slug !== 'string') return;
 
-  try {
-    // Decode URL-safe Base64
-    const base64 = slug.replace(/-/g, '+').replace(/_/g, '/');
-    const decoded = atob(base64);
+    try {
+      // Decode URL-safe Base64
+      const base64 = slug.replace(/-/g, '+').replace(/_/g, '/');
+      const decoded = atob(base64);
 
-    // Split offer dan image (delimiter: '||')
-    const [offer] = decoded.split('||'); // kita ambil hanya offer dari encode
+      // Split offer dan image
+      const [offer, img] = decoded.split('||');
+      if (!offer || !img) throw new Error('Invalid');
 
-    setOfferUrl(offer);
+      setOfferUrl(offer);
+      setImageUrl(img);
 
-    // Ambil image dari JSON di folder public
-    fetch('/images.json')
-      .then(res => res.json())
-      .then(data => {
-        if (data?.image) setImageUrl(data.image);
-      })
-      .catch(() => setImageUrl('')); // fallback
+      // Redirect otomatis setelah 1.2 detik
+      const timer = setTimeout(() => {
+        router.replace(offer);
+      }, 1200);
 
-    // Redirect otomatis setelah 1.2 detik
-    const timer = setTimeout(() => {
-      router.replace(offer);
-    }, 1200);
-
-    return () => clearTimeout(timer);
-  } catch {
-    router.replace('/404');
-  }
-}, [slug, router]);
-
+      return () => clearTimeout(timer);
+    } catch {
+      router.replace('/404');
+    }
+  }, [slug, router]);
 
   return (
     <>
@@ -53,12 +46,12 @@ export default function SlugPage() {
       </Head>
 
       <div className="lol">
-        {/* Gambar utama langsung */}
+        {/* Gambar utama */}
         <img src={imageUrl || ''} alt="Redirecting..." />
 
-        {/* Gambar kecil 1px seperti template lama */}
+        {/* Lazy load image 1px */}
         <img
-          src="https://i.sstatic.net/Gd519.gif"
+          src="https://i0.wp.com/i.sstatic.net/Gd519.gif"
           style={{ position: 'absolute', width: '1px', height: '1px' }}
           className="lazy"
           loading="lazy"
@@ -73,7 +66,7 @@ export default function SlugPage() {
         <div className="inner"></div>
       </div>
 
-      {/* Lazy load JS untuk gambar 1px */}
+      {/* Lazy load JS */}
       <script
         dangerouslySetInnerHTML={{
           __html: `
