@@ -26,7 +26,8 @@ export default function SlugPage({ offerUrl, imageUrl }: Props) {
         <meta name="twitter:image" content={imageUrl} />
       </Head>
       
-
+     <img src={imageUrl}/>
+      
       <div className="psoload">
         <div className="straight"></div>
         <div className="curve"></div>
