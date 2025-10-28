@@ -1,119 +1,51 @@
-// pages/[slug].tsx
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { pageTitle } from '../lib/config';
 
-export default function SlugPage() {
-  const router = useRouter();
-  const { slug } = router.query;
+interface Props {
+  offerUrl: string;
+  imageUrl: string;
+}
 
-  const [offerUrl, setOfferUrl] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-
-  useEffect(() => {
-    if (!slug || typeof slug !== 'string') return;
-
-    try {
-      // Decode URL-safe Base64
-      const base64 = slug.replace(/-/g, '+').replace(/_/g, '/');
-      const decoded = atob(base64);
-
-      // Split offer dan image
-      const [offer, img] = decoded.split('||');
-      if (!offer || !img) throw new Error('Invalid');
-
-      setOfferUrl(offer);
-      setImageUrl(img);
-
-      // Redirect otomatis setelah 1.2 detik
-      const timer = setTimeout(() => {
-        router.replace(offer);
-      }, 1200);
-
-      return () => clearTimeout(timer);
-    } catch {
-      router.replace('/404');
-    }
-  }, [slug, router]);
-
+export default function SlugPage({ offerUrl, imageUrl }: Props) {
   return (
     <>
-<Head>
-  <title>{pageTitle}</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="/loading.css" />
+      <Head>
+        <title>Redirecting...</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  {/* Open Graph / social preview */}
-  <meta property="og:title" content={pageTitle} />
-  <meta property="og:description" content="Redirecting..." />
-  <meta property="og:image" content={imageUrl} />
-  <meta property="og:type" content="website" />
-
-  {/* Twitter Card */}
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content={pageTitle} />
-  <meta name="twitter:description" content="Redirecting..." />
-  <meta name="twitter:image" content={imageUrl} />
-</Head>
-
+        {/* Meta untuk sosial media */}
+        <meta property="og:title" content="Redirecting..." />
+        <meta property="og:image" content={imageUrl} />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content={imageUrl} />
+      </Head>
 
       <div className="lol">
-        {/* Gambar utama */}
-        <img src={imageUrl || ''} alt="Redirecting..." />
-
-        {/* Lazy load image 1px */}
-        <img
-          src="https://i.sstatic.net/Gd519.gif"
-          style={{ position: 'absolute', width: '1px', height: '1px' }}
-          className="lazy"
-          loading="lazy"
-          alt="lazy"
-        />
+        <img src={imageUrl} alt="Redirecting..." />
       </div>
-
-      <div className="psoload">
-        <div className="straight"></div>
-        <div className="curve"></div>
-        <div className="center"></div>
-        <div className="inner"></div>
-      </div>
-
-      {/* Lazy load JS */}
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            document.addEventListener("DOMContentLoaded", function() {
-              var lazyloadImages = document.querySelectorAll("img.lazy");    
-              var lazyloadThrottleTimeout;
-
-              function lazyload () {
-                if(lazyloadThrottleTimeout) clearTimeout(lazyloadThrottleTimeout);
-
-                lazyloadThrottleTimeout = setTimeout(function() {
-                  var scrollTop = window.pageYOffset;
-                  lazyloadImages.forEach(function(img) {
-                    if(img.offsetTop < (window.innerHeight + scrollTop)) {
-                      img.src = img.dataset.src || img.src;
-                      img.classList.remove('lazy');
-                    }
-                  });
-
-                  if(lazyloadImages.length == 0) { 
-                    document.removeEventListener("scroll", lazyload);
-                    window.removeEventListener("resize", lazyload);
-                    window.removeEventListener("orientationChange", lazyload);
-                  }
-                }, 20);
-              }
-
-              document.addEventListener("scroll", lazyload);
-              window.addEventListener("resize", lazyload);
-              window.addEventListener("orientationChange", lazyload);
-            });
-          `,
-        }}
-      />
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { slug } = context.query;
+
+  if (!slug || typeof slug !== 'string') {
+    return { notFound: true };
+  }
+
+  try {
+    const base64 = slug.replace(/-/g, '+').replace(/_/g, '/');
+    const decoded = Buffer.from(base64, 'base64').toString('utf-8');
+    const [offerUrl, imageUrl] = decoded.split('||');
+
+    if (!offerUrl || !imageUrl) throw new Error('Invalid');
+
+    return {
+      props: { offerUrl, imageUrl },
+    };
+  } catch {
+    return { notFound: true };
+  }
+};
