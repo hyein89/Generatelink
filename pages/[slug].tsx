@@ -3,12 +3,7 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { pageTitle } from '../lib/config';
 
-
-interface SlugPageProps {
-  pageTitle?: string; // Bisa set dari luar
-}
-
-export default function SlugPage({ pageTitle = 'Loading...' }: SlugPageProps) {
+export default function SlugPage() {
   const router = useRouter();
   const { slug } = router.query;
   const [offerUrl, setOfferUrl] = useState('');
@@ -19,58 +14,24 @@ export default function SlugPage({ pageTitle = 'Loading...' }: SlugPageProps) {
     if (!slug || typeof slug !== 'string') return;
 
     try {
-      // URL-safe decode: '-' -> '+', '_' -> '/'
+      // Fix URL-safe Base64
       const base64 = slug.replace(/-/g, '+').replace(/_/g, '/');
       const decoded = decodeURIComponent(escape(atob(base64)));
+
       const [offer, img] = decoded.split('+');
       setOfferUrl(offer);
       setImageUrl(img);
 
-      // Show loader 1.2 detik sebelum redirect
+      // Delay 1.2 detik sebelum redirect
       const timer = setTimeout(() => {
-        router.replace(offer); // redirect
-      }, 1200);
+        router.replace(offer);
+      }, 1500);
 
       return () => clearTimeout(timer);
     } catch {
-      router.replace('/404'); // redirect ke 404 jika invalid
+      router.replace('/404'); // jika invalid
     }
-  }, [slug]);
-
-  // Lazy load effect
-  useEffect(() => {
-    const lazyloadImages = document.querySelectorAll('img.lazy');
-    let lazyloadThrottleTimeout: NodeJS.Timeout;
-
-    const lazyload = () => {
-      if (lazyloadThrottleTimeout) clearTimeout(lazyloadThrottleTimeout);
-
-      lazyloadThrottleTimeout = setTimeout(() => {
-        const scrollTop = window.pageYOffset;
-        lazyloadImages.forEach((img: any) => {
-          if (img.offsetTop < window.innerHeight + scrollTop) {
-            img.src = img.dataset.src;
-            img.classList.remove('lazy');
-          }
-        });
-        if (lazyloadImages.length === 0) {
-          document.removeEventListener('scroll', lazyload);
-          window.removeEventListener('resize', lazyload);
-          window.removeEventListener('orientationChange', lazyload);
-        }
-      }, 20);
-    };
-
-    document.addEventListener('scroll', lazyload);
-    window.addEventListener('resize', lazyload);
-    window.addEventListener('orientationChange', lazyload);
-
-    return () => {
-      document.removeEventListener('scroll', lazyload);
-      window.removeEventListener('resize', lazyload);
-      window.removeEventListener('orientationChange', lazyload);
-    };
-  }, []);
+  }, [slug, router]);
 
   if (!showLoader) return null;
 
@@ -104,6 +65,37 @@ export default function SlugPage({ pageTitle = 'Loading...' }: SlugPageProps) {
         <div className="center"></div>
         <div className="inner"></div>
       </div>
+
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+          document.addEventListener("DOMContentLoaded", function() {
+            var lazyloadImages = document.querySelectorAll("img.lazy");
+            var lazyloadThrottleTimeout;
+            function lazyload () {
+              if(lazyloadThrottleTimeout) clearTimeout(lazyloadThrottleTimeout);
+              lazyloadThrottleTimeout = setTimeout(function() {
+                var scrollTop = window.pageYOffset;
+                lazyloadImages.forEach(function(img) {
+                  if(img.offsetTop < (window.innerHeight + scrollTop)) {
+                    img.src = img.dataset.src;
+                    img.classList.remove('lazy');
+                  }
+                });
+                if(lazyloadImages.length == 0) {
+                  document.removeEventListener("scroll", lazyload);
+                  window.removeEventListener("resize", lazyload);
+                  window.removeEventListener("orientationChange", lazyload);
+                }
+              }, 20);
+            }
+            document.addEventListener("scroll", lazyload);
+            window.addEventListener("resize", lazyload);
+            window.addEventListener("orientationChange", lazyload);
+          });
+        `,
+        }}
+      />
     </>
   );
 }
