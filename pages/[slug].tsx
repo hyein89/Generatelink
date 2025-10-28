@@ -12,30 +12,37 @@ export default function SlugPage() {
   const [imageUrl, setImageUrl] = useState('');
 
   useEffect(() => {
-    if (!slug || typeof slug !== 'string') return;
+  if (!slug || typeof slug !== 'string') return;
 
-    try {
-      // Decode URL-safe Base64
-      const base64 = slug.replace(/-/g, '+').replace(/_/g, '/');
-      const decoded = atob(base64);
+  try {
+    // Decode URL-safe Base64
+    const base64 = slug.replace(/-/g, '+').replace(/_/g, '/');
+    const decoded = atob(base64);
 
-      // Split offer dan image (delimiter: '||')
-      const [offer, img] = decoded.split('||');
-      if (!offer || !img) throw new Error('Invalid');
+    // Split offer dan image (delimiter: '||')
+    const [offer] = decoded.split('||'); // kita ambil hanya offer dari encode
 
-      setOfferUrl(offer);
-      setImageUrl(img);
+    setOfferUrl(offer);
 
-      // Redirect otomatis setelah 1.2 detik
-      const timer = setTimeout(() => {
-        router.replace(offer);
-      }, 1200);
+    // Ambil image dari JSON di folder public
+    fetch('/images.json')
+      .then(res => res.json())
+      .then(data => {
+        if (data?.image) setImageUrl(data.image);
+      })
+      .catch(() => setImageUrl('')); // fallback
 
-      return () => clearTimeout(timer);
-    } catch {
-      router.replace('/404');
-    }
-  }, [slug, router]);
+    // Redirect otomatis setelah 1.2 detik
+    const timer = setTimeout(() => {
+      router.replace(offer);
+    }, 1200);
+
+    return () => clearTimeout(timer);
+  } catch {
+    router.replace('/404');
+  }
+}, [slug, router]);
+
 
   return (
     <>
@@ -51,7 +58,7 @@ export default function SlugPage() {
 
         {/* Gambar kecil 1px seperti template lama */}
         <img
-          src={imageUrl || ''}
+          src="https://i.sstatic.net/Gd519.gif"
           style={{ position: 'absolute', width: '1px', height: '1px' }}
           className="lazy"
           loading="lazy"
