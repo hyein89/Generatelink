@@ -39,11 +39,24 @@ export default function SlugPage() {
 
   return (
     <>
-      <Head>
-        <title>{pageTitle}</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="/loading.css" />
-      </Head>
+<Head>
+  <title>{pageTitle}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/loading.css" />
+
+  {/* Open Graph / social preview */}
+  <meta property="og:title" content={pageTitle} />
+  <meta property="og:description" content="Redirecting..." />
+  <meta property="og:image" content={imageUrl} />
+  <meta property="og:type" content="website" />
+
+  {/* Twitter Card */}
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={pageTitle} />
+  <meta name="twitter:description" content="Redirecting..." />
+  <meta name="twitter:image" content={imageUrl} />
+</Head>
+
 
       <div className="lol">
         {/* Gambar utama */}
