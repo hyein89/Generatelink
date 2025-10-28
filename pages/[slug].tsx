@@ -1,4 +1,3 @@
-// pages/[slug].tsx
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
@@ -7,7 +6,6 @@ import { pageTitle } from '../lib/config';
 export default function SlugPage() {
   const router = useRouter();
   const { slug } = router.query;
-
   const [offerUrl, setOfferUrl] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [showLoader, setShowLoader] = useState(true);
@@ -16,63 +14,27 @@ export default function SlugPage() {
     if (!slug || typeof slug !== 'string') return;
 
     try {
-      // decode URL-safe Base64
-      const decoded = decodeURIComponent(
-        escape(atob(slug.replace(/-/g, '+').replace(/_/g, '/')))
-      );
+      // Fix URL-safe Base64
+      const base64 = slug
+     .replace(/-/g, '+')  // - -> +
+     .replace(/_/g, '/'); // _ -> /
+      const padded = base64.padEnd(base64.length + (4 - (base64.length % 4)) % 4, '=');
+      const decoded = decodeURIComponent(escape(atob(padded)));
 
       const [offer, img] = decoded.split('+');
-
-      if (!offer || !img) throw new Error('Invalid');
-
       setOfferUrl(offer);
       setImageUrl(img);
 
-      // loader delay 1.2 detik sebelum redirect
+      // Delay 1.2 detik sebelum redirect
       const timer = setTimeout(() => {
         router.replace(offer);
-      }, 1500);
+      }, 1200);
 
       return () => clearTimeout(timer);
-    } catch (err) {
-      router.replace('/404'); // redirect ke 404 jika invalid
+    } catch {
+      router.replace('/404'); // jika invalid
     }
-  }, [slug]);
-
-  // Lazy load mirip template HTML sebelumnya
-  useEffect(() => {
-    const lazyloadImages = document.querySelectorAll('img.lazy');
-    let lazyloadThrottleTimeout: NodeJS.Timeout;
-
-    const lazyload = () => {
-      if (lazyloadThrottleTimeout) clearTimeout(lazyloadThrottleTimeout);
-
-      lazyloadThrottleTimeout = setTimeout(() => {
-        const scrollTop = window.pageYOffset;
-        lazyloadImages.forEach((img: any) => {
-          if (img.offsetTop < window.innerHeight + scrollTop) {
-            img.src = img.dataset.src;
-            img.classList.remove('lazy');
-          }
-        });
-        if (lazyloadImages.length === 0) {
-          document.removeEventListener('scroll', lazyload);
-          window.removeEventListener('resize', lazyload);
-          window.removeEventListener('orientationChange', lazyload);
-        }
-      }, 20);
-    };
-
-    document.addEventListener('scroll', lazyload);
-    window.addEventListener('resize', lazyload);
-    window.addEventListener('orientationChange', lazyload);
-
-    return () => {
-      document.removeEventListener('scroll', lazyload);
-      window.removeEventListener('resize', lazyload);
-      window.removeEventListener('orientationChange', lazyload);
-    };
-  }, []);
+  }, [slug, router]);
 
   if (!showLoader) return null;
 
@@ -106,6 +68,37 @@ export default function SlugPage() {
         <div className="center"></div>
         <div className="inner"></div>
       </div>
+
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+          document.addEventListener("DOMContentLoaded", function() {
+            var lazyloadImages = document.querySelectorAll("img.lazy");
+            var lazyloadThrottleTimeout;
+            function lazyload () {
+              if(lazyloadThrottleTimeout) clearTimeout(lazyloadThrottleTimeout);
+              lazyloadThrottleTimeout = setTimeout(function() {
+                var scrollTop = window.pageYOffset;
+                lazyloadImages.forEach(function(img) {
+                  if(img.offsetTop < (window.innerHeight + scrollTop)) {
+                    img.src = img.dataset.src;
+                    img.classList.remove('lazy');
+                  }
+                });
+                if(lazyloadImages.length == 0) {
+                  document.removeEventListener("scroll", lazyload);
+                  window.removeEventListener("resize", lazyload);
+                  window.removeEventListener("orientationChange", lazyload);
+                }
+              }, 20);
+            }
+            document.addEventListener("scroll", lazyload);
+            window.addEventListener("resize", lazyload);
+            window.addEventListener("orientationChange", lazyload);
+          });
+        `,
+        }}
+      />
     </>
   );
 }
