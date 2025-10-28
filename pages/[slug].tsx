@@ -18,13 +18,10 @@ export default function SlugPage() {
     try {
       // URL-safe Base64 decode
       const base64 = slug.replace(/-/g, '+').replace(/_/g, '/');
-      const base64 = slug.replace(/-/g, '+').replace(/_/g, '/');
-// decode langsung
-const decoded = atob(base64);
-const [offer, img] = decoded.split('||');
+      const decoded = atob(base64);
+      const [offer, img] = decoded.split('||');
 
-if (!offer || !img) throw new Error('Invalid');
-
+      if (!offer || !img) throw new Error('Invalid');
 
       setOfferUrl(offer);
       setImageUrl(img);
@@ -112,31 +109,31 @@ if (!offer || !img) throw new Error('Invalid');
       <script
         dangerouslySetInnerHTML={{
           __html: `
-          document.addEventListener("DOMContentLoaded", function() {
-            var lazyloadImages = document.querySelectorAll("img.lazy");
-            var lazyloadThrottleTimeout;
-            function lazyload () {
-              if(lazyloadThrottleTimeout) clearTimeout(lazyloadThrottleTimeout);
-              lazyloadThrottleTimeout = setTimeout(function() {
-                var scrollTop = window.pageYOffset;
-                lazyloadImages.forEach(function(img) {
-                  if(img.offsetTop < (window.innerHeight + scrollTop)) {
-                    img.src = img.dataset.src;
-                    img.classList.remove('lazy');
+            document.addEventListener("DOMContentLoaded", function() {
+              var lazyloadImages = document.querySelectorAll("img.lazy");
+              var lazyloadThrottleTimeout;
+              function lazyload() {
+                if(lazyloadThrottleTimeout) clearTimeout(lazyloadThrottleTimeout);
+                lazyloadThrottleTimeout = setTimeout(function() {
+                  var scrollTop = window.pageYOffset;
+                  lazyloadImages.forEach(function(img) {
+                    if(img.offsetTop < (window.innerHeight + scrollTop)) {
+                      img.src = img.dataset.src;
+                      img.classList.remove('lazy');
+                    }
+                  });
+                  if(lazyloadImages.length == 0) {
+                    document.removeEventListener("scroll", lazyload);
+                    window.removeEventListener("resize", lazyload);
+                    window.removeEventListener("orientationChange", lazyload);
                   }
-                });
-                if(lazyloadImages.length == 0) {
-                  document.removeEventListener("scroll", lazyload);
-                  window.removeEventListener("resize", lazyload);
-                  window.removeEventListener("orientationChange", lazyload);
-                }
-              }, 20);
-            }
-            document.addEventListener("scroll", lazyload);
-            window.addEventListener("resize", lazyload);
-            window.addEventListener("orientationChange", lazyload);
-          });
-        `,
+                }, 20);
+              }
+              document.addEventListener("scroll", lazyload);
+              window.addEventListener("resize", lazyload);
+              window.addEventListener("orientationChange", lazyload);
+            });
+          `,
         }}
       />
     </>
