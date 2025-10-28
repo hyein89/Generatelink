@@ -16,49 +16,46 @@ export default function Home() {
   };
 
   const handleUpload = async () => {
-    if (!offerUrl || !apiKey || !file) {
-      showNotify('⚠️ Lengkapi semua field!');
+  if (!offerUrl || !apiKey || !file) {
+    showNotify('⚠️ Lengkapi semua field!');
+    return;
+  }
+
+  showNotify('⏳ Uploading image...');
+
+  const formData = new FormData();
+  formData.append('image', file);
+
+  try {
+    const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+      method: 'POST',
+      body: formData,
+    });
+    const data = await res.json();
+
+    if (!data.success) {
+      showNotify('❌ Gagal upload! Periksa API key kamu.');
       return;
     }
 
-    showNotify('⏳ Uploading image...');
+    const imageUrl = data.data.url; // URL original dari Imgbb
 
-    const formData = new FormData();
-    formData.append('image', file);
+    // Combine offer + image langsung tanpa resize
+    const combined = offerUrl + '||' + imageUrl;
+    const encoded = btoa(combined)
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+    const fullLink = `${window.location.origin}/${encoded}`;
 
-    try {
-      const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
-        method: 'POST',
-        body: formData,
-      });
-      const data = await res.json();
+    setEncodedLink(fullLink);
+    setImagePreview(imageUrl); // preview tetap normal
+    showNotify('✅ Sukses Generate!');
+  } catch {
+    showNotify('❌ Gagal upload!');
+  }
+};
 
-      if (!data.success) {
-        showNotify('❌ Gagal upload! Periksa API key kamu.');
-        return;
-      }
-
-      const imageUrl = data.data.url;
-      const resizedImg = `https://wsrv.nl/?url=${encodeURIComponent(
-        imageUrl
-      )}&w=720&h=512&fit=crop`;
-      // gunakan || sebagai delimiter
-const combined = offerUrl + '||' + resizedImg;
-// Base64 standar
-const encoded = btoa(combined)
-// Buat URL-safe
-  .replace(/\+/g, '-')
-  .replace(/\//g, '_')
-  .replace(/=+$/, '');
-const fullLink = `${window.location.origin}/${encoded}`;
-
-      setEncodedLink(fullLink);
-      setImagePreview(resizedImg);
-      showNotify('✅ Sukses Generate!');
-    } catch {
-      showNotify('❌ Gagal upload!');
-    }
-  };
 
   const copyToClipboard = async () => {
     if (!encodedLink) return;
