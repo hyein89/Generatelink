@@ -19,15 +19,14 @@ export default function SlugPage({ offerUrl, imageUrl }: Props) {
         {/* Meta tags sosial media */}
         
         {/* Meta tags sosial media */}
-        <meta property="og:title" content="Redirecting..." />
+        
         <meta property="og:image" content={imageUrl} />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:image" content={imageUrl} />
       </Head>
       
-     <img src={imageUrl}/>
-      
+     
       <div className="psoload">
         <div className="straight"></div>
         <div className="curve"></div>
