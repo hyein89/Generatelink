@@ -85,7 +85,7 @@ export default function SlugPage() {
 
 
 
-      <img src={imageUrl ? imageUrl : '/placeholder.png'}/>
+      <img src={imageUrl}/>
       <img src="https://i.sstatic.net/Gd519.gif" style={{ position: 'absolute', width: '1px', height: '1px' }} className="lazy" loading="lazy" />
       
       
