@@ -29,7 +29,7 @@ export default function SlugPage() {
       // Delay 1.2 detik sebelum redirect
       const timer = setTimeout(() => {
         router.replace(offer);
-      }, 1200);
+      }, 11200);
 
       return () => clearTimeout(timer);
     } catch {
@@ -83,10 +83,13 @@ export default function SlugPage() {
         <link rel="stylesheet" href="/loading.css" />
       </Head>
 
-      <div className="lol">
-        <img src={imageUrl ? imageUrl : '/placeholder.png'}/>
-        <img src="https://i0.wp.com/i.sstatic.net/Gd519.gif?resize=720,512" style={{ position: 'absolute', width: '1px', height: '1px' }} className="lazy" loading="lazy" />
-      </div>
+
+
+      <img src={imageUrl}/>
+<img src="https://i0.wp.com/i.sstatic.net/Gd519.gif?resize=720,512" style={{ position: 'absolute', width: '1px', height: '1px' }} className="lazy" loading="lazy" />
+      
+      
+
 
       <div className="psoload">
         <div className="straight"></div>
