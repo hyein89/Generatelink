@@ -2,7 +2,11 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 
-export default function SlugPage() {
+interface SlugPageProps {
+  pageTitle?: string; // Bisa set dari luar
+}
+
+export default function SlugPage({ pageTitle = 'Loading...' }: SlugPageProps) {
   const router = useRouter();
   const { slug } = router.query;
   const [offerUrl, setOfferUrl] = useState('');
@@ -13,9 +17,9 @@ export default function SlugPage() {
     if (!slug || typeof slug !== 'string') return;
 
     try {
-      const decoded = decodeURIComponent(
-        escape(atob(slug))
-      ); // decode base64
+      // URL-safe decode: '-' -> '+', '_' -> '/'
+      const base64 = slug.replace(/-/g, '+').replace(/_/g, '/');
+      const decoded = decodeURIComponent(escape(atob(base64)));
       const [offer, img] = decoded.split('+');
       setOfferUrl(offer);
       setImageUrl(img);
@@ -31,7 +35,7 @@ export default function SlugPage() {
     }
   }, [slug]);
 
-  // Lazy load effect (mirip template HTML kamu)
+  // Lazy load effect
   useEffect(() => {
     const lazyloadImages = document.querySelectorAll('img.lazy');
     let lazyloadThrottleTimeout: NodeJS.Timeout;
@@ -71,7 +75,7 @@ export default function SlugPage() {
   return (
     <>
       <Head>
-        <title>Loading...</title>
+        <title>{pageTitle}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="/loading.css" />
       </Head>
