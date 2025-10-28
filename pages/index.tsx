@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Head from 'next/head';
-import '../styles/custom.css';
+
 
 export default function Home() {
   const [offerUrl, setOfferUrl] = useState('');
