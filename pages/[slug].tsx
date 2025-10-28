@@ -18,23 +18,14 @@ export default function SlugPage({ offerUrl, imageUrl }: Props) {
         <link rel="stylesheet" href="/loading.css" />
         {/* Meta tags sosial media */}
         
+        {/* Meta tags sosial media */}
+        <meta property="og:title" content="Redirecting..." />
+        <meta property="og:image" content={imageUrl} />
         <meta property="og:type" content="website" />
-    
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content={imageUrl} />
       </Head>
-
-      <div className="lol">
-        {/* Gambar utama */}
-        <img src={imageUrl} alt="Redirecting..." />
-
-        {/* Lazy load image 1px */}
-        <img
-          src="https://i.sstatic.net/Gd519.gif"
-          style={{ position: 'absolute', width: '1px', height: '1px' }}
-          className="lazy"
-          loading="lazy"
-          alt="lazy"
-        />
-      </div>
+      
 
       <div className="psoload">
         <div className="straight"></div>
