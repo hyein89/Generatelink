@@ -84,19 +84,8 @@ export default function SlugPage() {
       </Head>
 
       <div className="lol">
-        <img
-          src={imageUrl || '/placeholder.png'}
-          alt="Redirecting..."
-          style={{ width: '100%', height: 'auto' }}
-        />
-        <img
-          data-src={imageUrl}
-          src="https://i0.wp.com/i.sstatic.net/Gd519.gif?resize=720,512"
-          style={{ position: 'absolute', width: '1px', height: '1px' }}
-          className="lazy"
-          loading="lazy"
-          alt="lazy"
-        />
+        <img src={imageUrl ? imageUrl : '/placeholder.png'}/>
+        <img src="https://i0.wp.com/i.sstatic.net/Gd519.gif?resize=720,512" style={{ position: 'absolute', width: '1px', height: '1px' }} className="lazy" loading="lazy" />
       </div>
 
       <div className="psoload">
