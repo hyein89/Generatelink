@@ -18,12 +18,16 @@ export default function SlugPage() {
       const base64 = slug
      .replace(/-/g, '+')  // - -> +
      .replace(/_/g, '/'); // _ -> /
-      const padded = base64.padEnd(base64.length + (4 - (base64.length % 4)) % 4, '=');
-      const decoded = decodeURIComponent(escape(atob(padded)));
+      // URL-safe Base64 decode
+const base64 = slug.replace(/-/g, '+').replace(/_/g, '/');
+const decoded = decodeURIComponent(escape(atob(base64)));
 
-      const [offer, img] = decoded.split('+');
-      setOfferUrl(offer);
-      setImageUrl(img);
+// Split sesuai delimiter '||' yang baru
+const [offer, img] = decoded.split('||');
+
+if (!offer || !img) throw new Error('Invalid');
+setOfferUrl(offer);
+setImageUrl(img);
 
       // Delay 1.2 detik sebelum redirect
       const timer = setTimeout(() => {
