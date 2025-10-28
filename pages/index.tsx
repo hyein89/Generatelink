@@ -43,8 +43,11 @@ export default function Home() {
         imageUrl
       )}&w=720&h=512&fit=crop`;
       const combined = offerUrl + '+' + resizedImg;
-      const encoded = btoa(unescape(encodeURIComponent(combined)));
-      const fullLink = `${window.location.origin}/${encoded}`;
+const encoded = btoa(unescape(encodeURIComponent(combined)))
+  .replace(/\+/g, '-')  // + -> -
+  .replace(/\//g, '_')  // / -> _
+  .replace(/=+$/, '');  // hapus padding
+const fullLink = `${window.location.origin}/${encoded}`;
 
       setEncodedLink(fullLink);
       setImagePreview(resizedImg);
