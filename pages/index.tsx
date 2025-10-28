@@ -27,7 +27,10 @@ export default function Home() {
     formData.append('image', file);
 
     try {
-      const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, { method: 'POST', body: formData });
+      const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+        method: 'POST',
+        body: formData,
+      });
       const data = await res.json();
 
       if (!data.success) {
@@ -36,7 +39,9 @@ export default function Home() {
       }
 
       const imageUrl = data.data.url;
-      const resizedImg = `https://wsrv.nl/?url=${encodeURIComponent(imageUrl)}&w=720&h=512&fit=crop`;
+      const resizedImg = `https://wsrv.nl/?url=${encodeURIComponent(
+        imageUrl
+      )}&w=720&h=512&fit=crop`;
       const combined = offerUrl + '+' + resizedImg;
       const encoded = btoa(unescape(encodeURIComponent(combined)));
       const fullLink = `${window.location.origin}/${encoded}`;
@@ -66,22 +71,62 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/favicon.png" />
       </Head>
+
       <div className="container">
         <header>
           <span className="material-icons-round">link</span>
           Offer Generator + Redirect
         </header>
+
         <main>
           <div>
             <label>Offer URL</label>
-            <input type="url" placeholder="https://example.com/offer" value={offerUrl} onChange={(e) => setOfferUrl(e.target.value)} />
+            <input
+              type="url"
+              placeholder="https://example.com/offer"
+              value={offerUrl}
+              onChange={(e) => setOfferUrl(e.target.value)}
+            />
           </div>
+
           <div>
             <label>ImgBB API Key</label>
-            <input type="text" placeholder="Masukkan API key Imgbb kamu" value={apiKey} onChange={(e) => setApiKey(e.target.value)} />
+            <input
+              type="text"
+              placeholder="Masukkan API key Imgbb kamu"
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+            />
           </div>
+
           <div>
             <label>Upload Image</label>
-            <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+            />
           </div>
-          <button onClick={h
+
+          <button onClick={handleUpload}>
+            <span className="material-icons-round">cloud_upload</span> Upload & Generate
+          </button>
+
+          {encodedLink && (
+            <>
+              <div className="output">{encodedLink}</div>
+              <button className="copy-btn" onClick={copyToClipboard}>
+                <span className="material-icons-round">content_copy</span> Copy
+              </button>
+              <div className="image-preview">
+                <img src={imagePreview} alt="Preview Image" />
+              </div>
+            </>
+          )}
+
+          {notify && <div className="notify">{notify}</div>}
+        </main>
+      </div>
+    </>
+  );
+}
