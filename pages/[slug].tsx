@@ -23,6 +23,7 @@ export default function SlugPage() {
       // Split sesuai delimiter '||'
       const [offer, img] = decoded.split('||');
 
+
       if (!offer || !img) throw new Error('Invalid');
 
       setOfferUrl(offer);
