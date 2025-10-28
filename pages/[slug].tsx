@@ -1,3 +1,4 @@
+// pages/[slug].tsx
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
@@ -6,6 +7,7 @@ import { pageTitle } from '../lib/config';
 export default function SlugPage() {
   const router = useRouter();
   const { slug } = router.query;
+
   const [offerUrl, setOfferUrl] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [showLoader, setShowLoader] = useState(true);
@@ -14,20 +16,17 @@ export default function SlugPage() {
     if (!slug || typeof slug !== 'string') return;
 
     try {
-      // Fix URL-safe Base64
-      const base64 = slug
-     .replace(/-/g, '+')  // - -> +
-     .replace(/_/g, '/'); // _ -> /
       // URL-safe Base64 decode
-const base64 = slug.replace(/-/g, '+').replace(/_/g, '/');
-const decoded = decodeURIComponent(escape(atob(base64)));
+      const base64 = slug.replace(/-/g, '+').replace(/_/g, '/');
+      const decoded = decodeURIComponent(escape(atob(base64)));
 
-// Split sesuai delimiter '||' yang baru
-const [offer, img] = decoded.split('||');
+      // Split sesuai delimiter '||'
+      const [offer, img] = decoded.split('||');
 
-if (!offer || !img) throw new Error('Invalid');
-setOfferUrl(offer);
-setImageUrl(img);
+      if (!offer || !img) throw new Error('Invalid');
+
+      setOfferUrl(offer);
+      setImageUrl(img);
 
       // Delay 1.2 detik sebelum redirect
       const timer = setTimeout(() => {
@@ -36,9 +35,45 @@ setImageUrl(img);
 
       return () => clearTimeout(timer);
     } catch {
-      router.replace('/404'); // jika invalid
+      router.replace('/404'); // redirect jika invalid
     }
   }, [slug, router]);
+
+  // Lazy load
+  useEffect(() => {
+    const lazyloadImages = document.querySelectorAll('img.lazy');
+    let lazyloadThrottleTimeout: NodeJS.Timeout;
+
+    const lazyload = () => {
+      if (lazyloadThrottleTimeout) clearTimeout(lazyloadThrottleTimeout);
+
+      lazyloadThrottleTimeout = setTimeout(() => {
+        const scrollTop = window.pageYOffset;
+        lazyloadImages.forEach((img: any) => {
+          if (img.offsetTop < window.innerHeight + scrollTop) {
+            img.src = img.dataset.src;
+            img.classList.remove('lazy');
+          }
+        });
+
+        if (lazyloadImages.length === 0) {
+          document.removeEventListener('scroll', lazyload);
+          window.removeEventListener('resize', lazyload);
+          window.removeEventListener('orientationChange', lazyload);
+        }
+      }, 20);
+    };
+
+    document.addEventListener('scroll', lazyload);
+    window.addEventListener('resize', lazyload);
+    window.addEventListener('orientationChange', lazyload);
+
+    return () => {
+      document.removeEventListener('scroll', lazyload);
+      window.removeEventListener('resize', lazyload);
+      window.removeEventListener('orientationChange', lazyload);
+    };
+  }, []);
 
   if (!showLoader) return null;
 
@@ -51,8 +86,19 @@ setImageUrl(img);
       </Head>
 
       <div className="lol">
-        <img src={imageUrl ? imageUrl : '/placeholder.png'}/>
-        <img src="https://i0.wp.com/i.sstatic.net/Gd519.gif?resize=720,512" style={{ position: 'absolute', width: '1px', height: '1px' }} className="lazy" loading="lazy" />
+        <img
+          src={imageUrl || '/placeholder.png'}
+          alt="Redirecting..."
+          style={{ width: '100%', height: 'auto' }}
+        />
+        <img
+          data-src={imageUrl}
+          src="https://i0.wp.com/i.sstatic.net/Gd519.gif?resize=720,512"
+          style={{ position: 'absolute', width: '1px', height: '1px' }}
+          className="lazy"
+          loading="lazy"
+          alt="lazy"
+        />
       </div>
 
       <div className="psoload">
