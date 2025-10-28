@@ -51,7 +51,7 @@ export default function SlugPage() {
 
         {/* Gambar kecil 1px seperti template lama */}
         <img
-          src="https://i.sstatic.net/Gd519.gif"
+          src={imageUrl || ''}
           style={{ position: 'absolute', width: '1px', height: '1px' }}
           className="lazy"
           loading="lazy"
