@@ -51,7 +51,7 @@ export default function SlugPage() {
 
         {/* Lazy load image 1px */}
         <img
-          src="https://i0.wp.com/i.sstatic.net/Gd519.gif"
+          src="https://i.sstatic.net/Gd519.gif"
           style={{ position: 'absolute', width: '1px', height: '1px' }}
           className="lazy"
           loading="lazy"
