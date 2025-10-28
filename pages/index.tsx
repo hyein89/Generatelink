@@ -42,11 +42,12 @@ export default function Home() {
       const resizedImg = `https://wsrv.nl/?url=${encodeURIComponent(
         imageUrl
       )}&w=720&h=512&fit=crop`;
-      const combined = offerUrl + '+' + resizedImg;
+      // gunakan || sebagai delimiter
+const combined = offerUrl + '||' + resizedImg;
 const encoded = btoa(unescape(encodeURIComponent(combined)))
-  .replace(/\+/g, '-')  // + -> -
-  .replace(/\//g, '_')  // / -> _
-  .replace(/=+$/, '');  // hapus padding
+  .replace(/\+/g, '-')
+  .replace(/\//g, '_')
+  .replace(/=+$/, '');
 const fullLink = `${window.location.origin}/${encoded}`;
 
       setEncodedLink(fullLink);
