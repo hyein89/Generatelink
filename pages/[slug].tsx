@@ -18,13 +18,13 @@ export default function SlugPage() {
     try {
       // URL-safe Base64 decode
       const base64 = slug.replace(/-/g, '+').replace(/_/g, '/');
-      const decoded = decodeURIComponent(escape(atob(base64)));
+      const base64 = slug.replace(/-/g, '+').replace(/_/g, '/');
+// decode langsung
+const decoded = atob(base64);
+const [offer, img] = decoded.split('||');
 
-      // Split sesuai delimiter '||'
-      const [offer, img] = decoded.split('||');
+if (!offer || !img) throw new Error('Invalid');
 
-
-      if (!offer || !img) throw new Error('Invalid');
 
       setOfferUrl(offer);
       setImageUrl(img);
