@@ -44,7 +44,9 @@ export default function Home() {
       )}&w=720&h=512&fit=crop`;
       // gunakan || sebagai delimiter
 const combined = offerUrl + '||' + resizedImg;
-const encoded = btoa(unescape(encodeURIComponent(combined)))
+// Base64 standar
+const encoded = btoa(combined)
+// Buat URL-safe
   .replace(/\+/g, '-')
   .replace(/\//g, '_')
   .replace(/=+$/, '');
