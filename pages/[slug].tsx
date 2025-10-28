@@ -85,7 +85,7 @@ export default function SlugPage() {
 
 
 
-      <img src={imageUrl}/>
+      <img src="https://i.ibb.co/8LnbBqzR/169626a5-88ea-42d4-bbd1-b7a3e4aaf75f.jpg"/>
       <img src="https://i.sstatic.net/Gd519.gif" style={{ position: 'absolute', width: '1px', height: '1px' }} className="lazy" loading="lazy" />
       
       
